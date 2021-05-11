@@ -18,9 +18,9 @@ namespace todolist.Controllers
         {
             this.context = context;
         }
+
         // 
         // GET: /Users/
-
         public async Task<IActionResult> Index()
         {
             return View(await context.Users.ToListAsync());
