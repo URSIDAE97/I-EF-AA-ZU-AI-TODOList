@@ -18,6 +18,6 @@ Wykorzystane technologie:
 
 Wykonał:
 
-Mateusz Miś
-I EF/AA-ZU
+Mateusz Miś \
+I EF/AA-ZU \
 152175
