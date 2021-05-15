@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using todolist.Models;
 using todolist.Models.Auth;
 using todolist.Models.Db;
+using todolist.Models.Enums;
 
 namespace todolist.Controllers
 {
@@ -55,7 +56,23 @@ namespace todolist.Controllers
         [HttpPost]
         public IActionResult SignUp([Bind("Username,Email,FirstName,LastName,Password,PasswordRep")] SignUpViewModel model)
         {
-            return View(model);
+            if (ModelState.IsValid)
+            {
+                User newUser = new User();
+                newUser.Username = model.Username;
+                newUser.FirstName = model.FirstName;
+                newUser.LastName = model.LastName;
+                newUser.Email = model.Email;
+                newUser.Password = model.Password;
+
+                newUser.RoleId = RolesEnum.USER_ID;
+                newUser.Created = DateTime.Now;
+                newUser.Modified = DateTime.Now;
+
+                context.Users.Add(newUser);
+                context.SaveChanges();
+            }
+            return Redirect("/Home");
         }
     }
 }

@@ -27,12 +27,12 @@ namespace todolist.Models.Db
                 context.Roles.AddRange(
                     new Role
                     {
-                        Id = 1,
+                        Id = RolesEnum.USER_ID,
                         Name = RolesEnum.USER
                     },
                     new Role
                     {
-                        Id = 2,
+                        Id = RolesEnum.ADMIN_ID,
                         Name = RolesEnum.ADMIN
                     }
                 );
@@ -55,7 +55,7 @@ namespace todolist.Models.Db
                         Email = "admin@admin.com",
                         Created = DateTime.Now,
                         Modified = DateTime.Now,
-                        RoleId = 2
+                        RoleId = RolesEnum.ADMIN_ID
                     },
                     new User
                     {
@@ -66,7 +66,7 @@ namespace todolist.Models.Db
                         Email = "jnowak@email.com",
                         Created = DateTime.Now,
                         Modified = DateTime.Now,
-                        RoleId = 1
+                        RoleId = RolesEnum.USER_ID
                     }
                 );
 

@@ -1,0 +1,25 @@
+﻿@model todolist.Models.TodoList
+
+@{
+    ViewData["Title"] = "Edit TODO list";
+}
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-success" />
+                <a asp-area=""
+                   asp-controller="TodoLists"
+                   asp-action="Index"
+                   class="btn btn-danger">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
