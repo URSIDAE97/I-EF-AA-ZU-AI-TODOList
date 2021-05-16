@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using todolist.Models;
 using todolist.Models.Auth;
@@ -30,14 +31,23 @@ namespace todolist.Controllers
         //
         // POST: /Auth/SignIn
         [HttpPost]
-        public IActionResult SignIn([Bind("Login,Password")] SignInViewModel model)
+        public IActionResult SignIn([Bind("Username,Password")] SignInViewModel model)
         {
             if (ModelState.IsValid)
             {
-                User user = context.Users.Where(u => u.Username.Equals(model.Username)).FirstOrDefault();
-                if (user != null && user.Password.Equals(model.Password))
+                User user = context.Users.First(u => u.Username.Equals(model.Username));
+                if (user != null && BCrypt.Net.BCrypt.Verify(model.Password, user.Password))
                 {
+                    HttpContext.Session.Set(
+                        "Identity",
+                        Encoding.UTF8.GetBytes(string.Format("{0};{1};{2}", user.Id, user.FirstName, user.LastName))
+                    );
                     return Redirect("/Home");
+                }
+                else
+                {
+                    ModelState.AddModelError("SignInFailed", "Incorect username or password");
+                    return View(model);
                 }
 
             }
@@ -58,21 +68,37 @@ namespace todolist.Controllers
         {
             if (ModelState.IsValid)
             {
+                if (context.Users.Any(u => u.Username == model.Username))
+                {
+                    ModelState.AddModelError("NonUniqueUsername", "This username is already in use");
+                    return View(model);
+                }
+
                 User newUser = new User();
                 newUser.Username = model.Username;
                 newUser.FirstName = model.FirstName;
                 newUser.LastName = model.LastName;
                 newUser.Email = model.Email;
-                newUser.Password = model.Password;
-
+                newUser.Password = BCrypt.Net.BCrypt.HashPassword(model.Password);
                 newUser.RoleId = RolesEnum.USER_ID;
                 newUser.Created = DateTime.Now;
                 newUser.Modified = DateTime.Now;
 
                 context.Users.Add(newUser);
                 context.SaveChanges();
+
+                return Redirect("/Home");
             }
-            return Redirect("/Home");
+            return View(model);
+        }
+
+        //
+        // GET: /Auth/LogOut
+        public IActionResult LogOut()
+        {
+            HttpContext.Session.Clear();
+
+            return RedirectToAction(nameof(SignIn));
         }
     }
 }
