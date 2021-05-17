@@ -54,9 +54,11 @@
         <tbody>
             @foreach (TodoTask task in Model.Tasks)
             {
-                <tr>
+                <tr class="@(task.IsCompleted ? "table-success" : "")">
                     <td>
-                        <input type="checkbox" value="@task.IsCompleted" class="form-control" />
+                        <form asp-controller="Tasks" asp-action="Complete" asp-route-id="@task.Id">
+                            <input asp-for="@task.IsCompleted" class="form-control todo-task-checkbox">
+                        </form>
                     </td>
                     <td>@task.Name</td>
                     <td>@task.Deadline</td>
