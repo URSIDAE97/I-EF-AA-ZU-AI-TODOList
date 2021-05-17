@@ -78,5 +78,26 @@ namespace todolist.Controllers
             }
             return View(model);
         }
+
+        //
+        // GET: /Users/Delete/
+        [Admin]
+        public IActionResult Delete(int id)
+        {
+            var user = context.Users.First(u => u.Id == id);
+            return View(user);
+        }
+
+        //
+        // POST: /Users/Delete/
+        [HttpPost, ActionName("Delete")]
+        [Admin]
+        public IActionResult DeleteConfirmed(int id)
+        {
+            var user = context.Users.Find(id);
+            context.Users.Remove(user);
+            context.SaveChanges();
+            return RedirectToAction(nameof(Index));
+        }
     }
 }

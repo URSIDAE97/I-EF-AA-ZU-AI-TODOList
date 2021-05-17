@@ -47,25 +47,67 @@ namespace todolist.Controllers
         // POST: /Categories/Edit
         [HttpPost]
         [SignedIn]
-        public IActionResult Edit(int? id, [Bind("Name")] Category category)
+        public IActionResult Edit(int? id, [Bind("Name")] Category model)
         {
             if (ModelState.IsValid)
             {
+                var identity = HttpContext.Items["Identity"];
+                int currUserId = identity != null ? (int) identity : -1;
+                int categoriesCount = context.Categories
+                    .Count(c => c.Name == model.Name && c.UserId == currUserId);
+                if ((id == null && categoriesCount > 0) || (id != null && categoriesCount > 1))
+                {
+                    ModelState.AddModelError("NonUniqueCategory", "Provided category is not unique");
+                    return View(model);
+                }
+                Category category;
                 if (id == null)
                 {
-                    category.Created = DateTime.Now;
-                    int currUserId = (int) HttpContext.Items["Identity"];
+                    category = new Category();
                     category.UserId = currUserId;
+                    category.Created = DateTime.Now;
                 }
+                else
+                {
+                    category = context.Categories.Find(id);
+                }
+                category.Name = model.Name;
                 category.Modified = DateTime.Now;
 
-                context.Categories.Add(category);
+                if (id == null)
+                {
+                    context.Categories.Add(category);
+                }
+                else
+                {
+                    context.Categories.Update(category);
+                }
                 context.SaveChanges();
 
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(category);
+            return View(model);
+        }
+
+        //
+        // GET: /Categories/Delete/
+        [SignedIn]
+        public IActionResult Delete(int id)
+        {
+            return View(context.Categories.Find(id));
+        }
+
+        //
+        // POST: /Categories/Delete/
+        [HttpPost, ActionName("Delete")]
+        [SignedIn]
+        public IActionResult DeleteConfirmed(int id)
+        {
+            var category = context.Categories.Find(id);
+            context.Categories.Remove(category);
+            context.SaveChanges();
+            return RedirectToAction(nameof(Index));
         }
     }
 }
