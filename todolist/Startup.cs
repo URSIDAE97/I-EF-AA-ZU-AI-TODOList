@@ -53,7 +53,7 @@ namespace todolist
 
             app.UseSession();
 
-            app.UseAuthMiddleware();
+            app.UseIdentityMiddleware();
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

@@ -1,7 +1,7 @@
-﻿@model todolist.Models.TodoList
+﻿@model todolist.Models.TodoTask
 
 @{
-    ViewData["Title"] = "Edit TODO list";
+    ViewData["Title"] = "Edit task";
 }
 
 <div class="row">
@@ -14,24 +14,24 @@
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <span class="text-danger">@Html.ValidationMessage("NonUniqueName")</span>
+                <label asp-for="Priority" class="control-label"></label>
+                <input asp-for="Priority" class="form-control" />
+                <span asp-validation-for="Priority" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="CategoryId" class="control-label"></label>
-                <select asp-for="CategoryId"
-                        asp-items="@(new SelectList((IEnumerable<Category>) ViewData["Categories"], "Id", "Name"))"
-                        class="form-control">
-                    <option>Please select one</option>
-                </select>
-                <span asp-validation-for="CategoryId" class="text-danger"></span>
+                <label asp-for="Deadline" class="control-label"></label>
+                <input asp-for="Deadline" class="form-control" />
+                <span asp-validation-for="Deadline" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-success" />
                 <a asp-area=""
                    asp-controller="TodoLists"
-                   asp-action="Index"
+                   asp-action="Manage"
+                   asp-route-id="@Model.TodoListId"
                    class="btn btn-danger">Cancel</a>
             </div>
+            <input hidden asp-for="TodoListId" class="form-control" />
         </form>
     </div>
 </div>

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using todolist.Middleware;
 using todolist.Models;
 using todolist.Models.Auth;
 using todolist.Models.Db;
@@ -22,6 +23,7 @@ namespace todolist.Controllers
 
         //
         // GET: /Auth/SignIn
+        [SignedOut]
         public IActionResult SignIn()
         {
             SignInViewModel LoginData = new SignInViewModel();
@@ -31,6 +33,7 @@ namespace todolist.Controllers
         //
         // POST: /Auth/SignIn
         [HttpPost]
+        [SignedOut]
         public IActionResult SignIn([Bind("Username,Password")] SignInViewModel model)
         {
             if (ModelState.IsValid)
@@ -40,7 +43,13 @@ namespace todolist.Controllers
                 {
                     HttpContext.Session.Set(
                         "Identity",
-                        Encoding.UTF8.GetBytes(string.Format("{0};{1};{2}", user.Id, user.FirstName, user.LastName))
+                        Encoding.UTF8.GetBytes(string.Format(
+                            "{0};{1};{2};{3}",
+                            user.Id,
+                            user.FirstName,
+                            user.LastName,
+                            user.RoleId
+                        ))
                     );
                     return Redirect("/Home");
                 }
@@ -56,6 +65,7 @@ namespace todolist.Controllers
 
         //
         // GET: /Auth/SignUp
+        [SignedOut]
         public IActionResult SignUp()
         {
             return View();
@@ -64,6 +74,7 @@ namespace todolist.Controllers
         //
         // POST: /Auth/SignUp
         [HttpPost]
+        [SignedOut]
         public IActionResult SignUp([Bind("Username,Email,FirstName,LastName,Password,PasswordRep")] SignUpViewModel model)
         {
             if (ModelState.IsValid)
@@ -93,12 +104,53 @@ namespace todolist.Controllers
         }
 
         //
-        // GET: /Auth/LogOut
-        public IActionResult LogOut()
+        // GET: /Auth/SignOut
+        [SignedIn]
+        public IActionResult SignOut()
         {
             HttpContext.Session.Clear();
 
             return RedirectToAction(nameof(SignIn));
+        }
+
+        //
+        // GET: /Auth/ChangePassword/
+        [SignedIn]
+        [CurrentUser]
+        public IActionResult ChangePassword(int id)
+        {
+            var model = new ChangePasswordViewModelcs();
+            model.UserId = id;
+            return View(model);
+        }
+
+        //
+        // POST: /Auth/ChangePassword/
+        [HttpPost]
+        [SignedIn]
+        [CurrentUser]
+        public IActionResult ChangePassword(int id, [Bind("OldPassword,NewPassword,NewPasswordRep")] ChangePasswordViewModelcs model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = context.Users.First(u => u.Id == id);
+                if (!BCrypt.Net.BCrypt.Verify(model.OldPassword, user.Password))
+                {
+                    ModelState.AddModelError("WrongOldPassword", "Provided password is incorrect");
+                    return View(model);
+                }
+                else
+                {
+                    user.Password = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
+                    user.Modified = DateTime.Now;
+
+                    context.Users.Update(user);
+                    context.SaveChanges();
+
+                    return RedirectToAction("Details", "Users", new { id = user.Id });
+                }
+            }
+            return View(model);
         }
     }
 }

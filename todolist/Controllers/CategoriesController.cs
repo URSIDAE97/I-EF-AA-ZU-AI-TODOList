@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using todolist.Models.Db;
-using Microsoft.EntityFrameworkCore;
 using todolist.Models;
+using todolist.Middleware;
 
 namespace todolist.Controllers
 {
@@ -21,13 +19,18 @@ namespace todolist.Controllers
 
         //
         // GET: /Categories/
-        public async Task<IActionResult> Index()
+        [SignedIn]
+        public IActionResult Index()
         {
-            return View(await context.Categories.ToListAsync());
+            var identity = HttpContext.Items["Identity"];
+            int currUserId = identity != null ? (int) identity : -1;
+            var categories = context.Categories.Where(c => c.UserId == currUserId);
+            return View(categories);
         }
 
         //
         // GET: /Categories/Edit
+        [SignedIn]
         public IActionResult Edit(int? id)
         {
             if (id == null)
@@ -43,24 +46,68 @@ namespace todolist.Controllers
         //
         // POST: /Categories/Edit
         [HttpPost]
-        public IActionResult Edit(int? id, [Bind("Name")] Category category)
+        [SignedIn]
+        public IActionResult Edit(int? id, [Bind("Name")] Category model)
         {
             if (ModelState.IsValid)
             {
+                var identity = HttpContext.Items["Identity"];
+                int currUserId = identity != null ? (int) identity : -1;
+                int categoriesCount = context.Categories
+                    .Count(c => c.Name == model.Name && c.UserId == currUserId);
+                if ((id == null && categoriesCount > 0) || (id != null && categoriesCount > 1))
+                {
+                    ModelState.AddModelError("NonUniqueCategory", "Provided category is not unique");
+                    return View(model);
+                }
+                Category category;
                 if (id == null)
                 {
+                    category = new Category();
+                    category.UserId = currUserId;
                     category.Created = DateTime.Now;
-                    category.UserId = 1;
                 }
+                else
+                {
+                    category = context.Categories.Find(id);
+                }
+                category.Name = model.Name;
                 category.Modified = DateTime.Now;
 
-                context.Categories.Add(category);
+                if (id == null)
+                {
+                    context.Categories.Add(category);
+                }
+                else
+                {
+                    context.Categories.Update(category);
+                }
                 context.SaveChanges();
 
                 return RedirectToAction(nameof(Index));
             }
 
-            return View(category);
+            return View(model);
+        }
+
+        //
+        // GET: /Categories/Delete/
+        [SignedIn]
+        public IActionResult Delete(int id)
+        {
+            return View(context.Categories.Find(id));
+        }
+
+        //
+        // POST: /Categories/Delete/
+        [HttpPost, ActionName("Delete")]
+        [SignedIn]
+        public IActionResult DeleteConfirmed(int id)
+        {
+            var category = context.Categories.Find(id);
+            context.Categories.Remove(category);
+            context.SaveChanges();
+            return RedirectToAction(nameof(Index));
         }
     }
 }

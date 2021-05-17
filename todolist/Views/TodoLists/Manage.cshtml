@@ -1,0 +1,78 @@
+﻿@model todolist.Models.TodoList
+
+@{
+    ViewData["Title"] = "Manage list";
+}
+
+<h1>@Html.DisplayFor(model => model.Name)</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            Category
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Category.Name)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Created)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Created)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Modified)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Modified)
+        </dd>
+    </dl>
+    <hr />
+</div>
+
+<div class="d-flex flex-row-reverse">
+    <a asp-action="Index"
+       class="btn btn-primary ml-2">Back</a>
+    <a asp-controller="Tasks"
+       asp-action="Edit"
+       asp-route-TodoListId="@Model.Id"
+       class="btn btn-success">New task</a>
+</div>
+
+<div class="mt-3">
+    <table class="table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Name</th>
+                <th>Deadline</th>
+                <th>Priority</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (TodoTask task in Model.Tasks)
+            {
+                <tr>
+                    <td>
+                        <input type="checkbox" value="@task.IsCompleted" class="form-control" />
+                    </td>
+                    <td>@task.Name</td>
+                    <td>@task.Deadline</td>
+                    <td>
+                        <span class="badge badge-primary badge-pill">@task.Priority</span>
+                    </td>
+                    <td>
+                        <a asp-controller="Tasks"
+                            asp-action="Edit"
+                            asp-route-id="@task.Id">Edit</a> |
+                        <a asp-controller="Tasks"
+                            asp-action="Delete"
+                            asp-route-id="@task.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

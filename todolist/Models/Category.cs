@@ -13,10 +13,15 @@ namespace todolist.Models
         [Key]
         [Column("id")]
         public int Id { get; set; }
+
         [Column("name")]
+        [Required]
+        [StringLength(50, ErrorMessage = "{0} length must be between {2} and {1}", MinimumLength = 3)]
         public string Name { get; set; }
+
         [Column("created")]
         public DateTime Created { get; set; }
+
         [Column("modified")]
         public DateTime Modified { get; set; }
 

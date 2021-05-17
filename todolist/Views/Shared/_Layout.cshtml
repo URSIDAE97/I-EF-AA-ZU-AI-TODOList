@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="~/css/site.css" />
 </head>
 <body>
-        @if ((bool) ViewContext.HttpContext.Items["IsLoggedIn"])
+        @if ((bool) ViewContext.HttpContext.Items["IsSignedIn"])
         {
             <header>
                 <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
@@ -46,38 +46,30 @@
                                        asp-action="Index"
                                        class="nav-link text-dark">Manage categories</a>
                                 </li>
-                                <li class="nav-item">
-                                    <a asp-area=""
-                                       asp-controller="Users"
-                                       asp-action="Index"
-                                       class="nav-link text-dark">Users</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a asp-area=""
-                                       asp-controller="Auth"
-                                       asp-action="SignIn"
-                                       class="nav-link text-dark">Login</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a asp-area=""
-                                       asp-controller="Auth"
-                                       asp-action="SignUp"
-                                       class="nav-link text-dark">Register</a>
-                                </li>
+                                @if ((bool) ViewContext.HttpContext.Items["IsAdmin"])
+                                {
+                                    <li class="nav-item">
+                                        <a asp-area=""
+                                           asp-controller="Users"
+                                           asp-action="Index"
+                                           class="nav-link text-dark">Users</a>
+                                    </li>
+                                }
                             </ul>
                             <ul class="navbar-nav">
                                 <li class="nav-item">
                                     <a asp-area=""
-                                       asp-controller="Auth"
-                                       asp-action="LogOut"
+                                       asp-controller="Users"
+                                       asp-action="Details"
+                                       asp-route-id="@ViewContext.HttpContext.Items["Identity"]"
                                        class="nav-link text-dark"
                                     >Hello @ViewContext.HttpContext.Items["FirstName"]</a>
                                 </li>
                                 <li class="nav-item">
                                     <a asp-area=""
                                        asp-controller="Auth"
-                                       asp-action="LogOut"
-                                       class="nav-link text-dark">Log out</a>
+                                       asp-action="SignOut"
+                                       class="nav-link text-dark">Sign out</a>
                                 </li>
                             </ul>
                         </div>
@@ -91,7 +83,7 @@
             </main>
         </div>
 
-        @if ((bool) ViewContext.HttpContext.Items["IsLoggedIn"])
+        @if ((bool) ViewContext.HttpContext.Items["IsSignedIn"])
         {
             <footer class="border-top footer text-muted">
                 <div class="container">
