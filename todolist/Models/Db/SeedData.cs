@@ -18,59 +18,55 @@ namespace todolist.Models.Db
                 )
             )
             {
-                if (context.Roles.Any())
+                if (!context.Roles.Any())
                 {
-                    return;   // DB has been already seeded
+                    // Add predefined roles
+                    context.Roles.AddRange(
+                        new Role
+                        {
+                            Id = RolesEnum.USER_ID,
+                            Name = RolesEnum.USER
+                        },
+                        new Role
+                        {
+                            Id = RolesEnum.ADMIN_ID,
+                            Name = RolesEnum.ADMIN
+                        }
+                    );
+
+                    context.SaveChanges();
                 }
 
-                // Add predefined roles
-                context.Roles.AddRange(
-                    new Role
-                    {
-                        Id = RolesEnum.USER_ID,
-                        Name = RolesEnum.USER
-                    },
-                    new Role
-                    {
-                        Id = RolesEnum.ADMIN_ID,
-                        Name = RolesEnum.ADMIN
-                    }
-                );
-
-                context.SaveChanges();
-
-                if (context.Users.Any())
+                if (!context.Users.Any())
                 {
-                    return; // DB has been already seeded
+                    // Add predefined users
+                    context.Users.AddRange(
+                        new User
+                        {
+                            Username = "admin",
+                            FirstName = "Admin",
+                            LastName = "Admin",
+                            Password = BCrypt.Net.BCrypt.HashPassword("admin"),
+                            Email = "admin@admin.com",
+                            Created = DateTime.Now,
+                            Modified = DateTime.Now,
+                            RoleId = RolesEnum.ADMIN_ID
+                        },
+                        new User
+                        {
+                            Username = "user",
+                            FirstName = "Jan",
+                            LastName = "Nowak",
+                            Password = BCrypt.Net.BCrypt.HashPassword("user"),
+                            Email = "jnowak@email.com",
+                            Created = DateTime.Now,
+                            Modified = DateTime.Now,
+                            RoleId = RolesEnum.USER_ID
+                        }
+                    );
+
+                    context.SaveChanges();
                 }
-
-                // Add predefined users
-                context.Users.AddRange(
-                    new User
-                    {
-                        Username = "admin",
-                        FirstName = "Admin",
-                        LastName = "Admin",
-                        Password = "admin",
-                        Email = "admin@admin.com",
-                        Created = DateTime.Now,
-                        Modified = DateTime.Now,
-                        RoleId = RolesEnum.ADMIN_ID
-                    },
-                    new User
-                    {
-                        Username = "user",
-                        FirstName = "Jan",
-                        LastName = "Nowak",
-                        Password = "user",
-                        Email = "jnowak@email.com",
-                        Created = DateTime.Now,
-                        Modified = DateTime.Now,
-                        RoleId = RolesEnum.USER_ID
-                    }
-                );
-
-                context.SaveChanges();
             }
         }
     }

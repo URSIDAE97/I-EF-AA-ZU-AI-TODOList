@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -9,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using todolist.Middleware;
 using todolist.Models.Db;
 
 namespace todolist
@@ -30,6 +32,9 @@ namespace todolist
             services.AddDbContext<TodoListDbContext>(options =>
                 options.UseNpgsql(Configuration.GetConnectionString("DbConnection"))
             );
+
+            services.AddDistributedMemoryCache();
+            services.AddSession();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -45,6 +50,11 @@ namespace todolist
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
+
+            app.UseSession();
+
+            app.UseAuthMiddleware();
+
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
