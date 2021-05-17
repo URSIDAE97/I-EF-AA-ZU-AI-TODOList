@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using todolist.Models.Db;
-using Microsoft.EntityFrameworkCore;
 using todolist.Models;
+using todolist.Middleware;
 
 namespace todolist.Controllers
 {
@@ -21,15 +19,18 @@ namespace todolist.Controllers
 
         //
         // GET: /Categories/
+        [SignedIn]
         public IActionResult Index()
         {
-            int currUserId = Int32.Parse((string) HttpContext.Items["Identity"]);
+            var identity = HttpContext.Items["Identity"];
+            int currUserId = identity != null ? (int) identity : -1;
             var categories = context.Categories.Where(c => c.UserId == currUserId);
             return View(categories);
         }
 
         //
         // GET: /Categories/Edit
+        [SignedIn]
         public IActionResult Edit(int? id)
         {
             if (id == null)
@@ -45,6 +46,7 @@ namespace todolist.Controllers
         //
         // POST: /Categories/Edit
         [HttpPost]
+        [SignedIn]
         public IActionResult Edit(int? id, [Bind("Name")] Category category)
         {
             if (ModelState.IsValid)
@@ -52,7 +54,7 @@ namespace todolist.Controllers
                 if (id == null)
                 {
                     category.Created = DateTime.Now;
-                    int currUserId = Int32.Parse((string) HttpContext.Items["Identity"]);
+                    int currUserId = (int) HttpContext.Items["Identity"];
                     category.UserId = currUserId;
                 }
                 category.Modified = DateTime.Now;

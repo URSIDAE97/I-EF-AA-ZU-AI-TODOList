@@ -7,6 +7,7 @@ using System.Text.Encodings.Web;
 using todolist.Models.Db;
 using Microsoft.EntityFrameworkCore;
 using todolist.Models;
+using todolist.Middleware;
 
 namespace todolist.Controllers
 {
@@ -22,6 +23,7 @@ namespace todolist.Controllers
 
         // 
         // GET: /Users/
+        [Admin]
         public async Task<IActionResult> Index()
         {
             return View(await context.Users.ToListAsync());
@@ -29,6 +31,7 @@ namespace todolist.Controllers
 
         //
         // GET: /Users/Details/
+        [CurrentUser]
         public IActionResult Details(int id)
         {
             var user = context.Users
@@ -40,6 +43,7 @@ namespace todolist.Controllers
 
         //
         // GET: /Users/Edit/
+        [CurrentUser]
         public IActionResult Edit(int id)
         {
             var user = context.Users.First(u => u.Id == id);
@@ -49,6 +53,7 @@ namespace todolist.Controllers
         //
         // POST: /Users/Edit/
         [HttpPost]
+        [CurrentUser]
         public IActionResult Edit(int? id, [Bind("Username,FirstName,LastName,Email")] User model)
         {
             if (ModelState.IsValid)

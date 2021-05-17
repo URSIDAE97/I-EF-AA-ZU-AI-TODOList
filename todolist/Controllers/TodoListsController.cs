@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using todolist.Models.Db;
-using Microsoft.EntityFrameworkCore;
 using todolist.Models;
+using todolist.Middleware;
 
 namespace todolist.Controllers
 {
@@ -20,6 +18,7 @@ namespace todolist.Controllers
 
         //
         // GET: /TodoLists/
+        [SignedIn]
         public IActionResult Index()
         {
             return View(context.TodoLists.ToList());
@@ -27,6 +26,7 @@ namespace todolist.Controllers
 
         //
         // GET: /TodoLists/Edit
+        [SignedIn]
         public IActionResult Edit(int? id)
         {
             if (id == null)
@@ -42,6 +42,7 @@ namespace todolist.Controllers
         //
         // POST: /TodoLists/Edit
         [HttpPost]
+        [SignedIn]
         public IActionResult Edit(int? id, [Bind("Name")] TodoList list)
         {
             if (ModelState.IsValid)

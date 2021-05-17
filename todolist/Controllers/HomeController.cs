@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+using todolist.Middleware;
 using todolist.Models;
 
 namespace todolist.Controllers
@@ -18,6 +15,7 @@ namespace todolist.Controllers
             _logger = logger;
         }
 
+        [SignedIn]
         public IActionResult Index()
         {
             return View();
