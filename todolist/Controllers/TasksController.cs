@@ -92,5 +92,20 @@ namespace todolist.Controllers
             context.SaveChanges();
             return RedirectToAction("Manage", "TodoLists", new { id = task.TodoListId });
         }
+
+        //
+        // GET: /Tasks/Complete/
+        public IActionResult Complete(int id)
+        {
+            var task = context.Tasks.Find(id);
+
+            task.IsCompleted = !task.IsCompleted;
+            task.Modified = DateTime.Now;
+
+            context.Tasks.Update(task);
+            context.SaveChanges();
+
+            return RedirectToAction("Manage", "TodoLists", new { id = task.TodoListId });
+        }
     }
 }

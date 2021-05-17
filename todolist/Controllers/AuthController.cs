@@ -38,7 +38,7 @@ namespace todolist.Controllers
         {
             if (ModelState.IsValid)
             {
-                User user = context.Users.First(u => u.Username.Equals(model.Username));
+                User user = context.Users.FirstOrDefault(u => u.Username.Equals(model.Username));
                 if (user != null && BCrypt.Net.BCrypt.Verify(model.Password, user.Password))
                 {
                     HttpContext.Session.Set(

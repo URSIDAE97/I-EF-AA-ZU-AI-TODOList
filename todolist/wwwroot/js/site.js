@@ -1,4 +1,12 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿$(document).ready(function () {
 
-// Write your JavaScript code.
+    $('.todo-task-checkbox').on('click', function (e) {
+        markCompleted(e.target);
+    });
+
+});
+
+function markCompleted (checkbox) {
+    var form = checkbox.closest('form');
+    form.submit();
+}
