@@ -100,5 +100,41 @@ namespace todolist.Controllers
 
             return RedirectToAction(nameof(SignIn));
         }
+
+        //
+        // GET: /Auth/ChangePassword/
+        public IActionResult ChangePassword(int id)
+        {
+            var model = new ChangePasswordViewModelcs();
+            model.UserId = id;
+            return View(model);
+        }
+
+        //
+        // POST: /Auth/ChangePassword/
+        [HttpPost]
+        public IActionResult ChangePassword(int id, [Bind("OldPassword,NewPassword,NewPasswordRep")] ChangePasswordViewModelcs model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = context.Users.First(u => u.Id == id);
+                if (!BCrypt.Net.BCrypt.Verify(model.OldPassword, user.Password))
+                {
+                    ModelState.AddModelError("WrongOldPassword", "Provided password is incorrect");
+                    return View(model);
+                }
+                else
+                {
+                    user.Password = BCrypt.Net.BCrypt.HashPassword(model.NewPassword);
+                    user.Modified = DateTime.Now;
+
+                    context.Users.Update(user);
+                    context.SaveChanges();
+
+                    return RedirectToAction("Details", "Users", new { id = user.Id });
+                }
+            }
+            return View(model);
+        }
     }
 }
