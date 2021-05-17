@@ -21,9 +21,11 @@ namespace todolist.Controllers
 
         //
         // GET: /Categories/
-        public async Task<IActionResult> Index()
+        public IActionResult Index()
         {
-            return View(await context.Categories.ToListAsync());
+            int currUserId = Int32.Parse((string) HttpContext.Items["Identity"]);
+            var categories = context.Categories.Where(c => c.UserId == currUserId);
+            return View(categories);
         }
 
         //
@@ -50,7 +52,8 @@ namespace todolist.Controllers
                 if (id == null)
                 {
                     category.Created = DateTime.Now;
-                    category.UserId = 1;
+                    int currUserId = Int32.Parse((string) HttpContext.Items["Identity"]);
+                    category.UserId = currUserId;
                 }
                 category.Modified = DateTime.Now;
 

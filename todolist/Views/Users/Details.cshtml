@@ -1,0 +1,68 @@
+﻿@model todolist.Models.User
+
+@{
+    ViewData["Title"] = "User details";
+}
+
+<h1>My account details</h1>
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Username)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Username)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.FirstName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.FirstName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.LastName)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.LastName)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Created)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Created)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Modified)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Modified)
+        </dd>
+        <dt class="col-sm-2">
+            Number of categories
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Categories.Count)
+        </dd>
+        <dt class="col-sm-2">
+            Number of TODO lists
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.TodoLists.Count)
+        </dd>
+    </dl>
+    <hr />
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-controller="Auth"
+       asp-action="ChangePassword"
+       asp-route-id="@Model.Id">Change password</a>
+</div>

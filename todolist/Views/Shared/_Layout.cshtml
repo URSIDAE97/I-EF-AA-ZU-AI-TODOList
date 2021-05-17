@@ -68,8 +68,9 @@
                             <ul class="navbar-nav">
                                 <li class="nav-item">
                                     <a asp-area=""
-                                       asp-controller="Auth"
-                                       asp-action="LogOut"
+                                       asp-controller="Users"
+                                       asp-action="Details"
+                                       asp-route-id="@ViewContext.HttpContext.Items["Identity"]"
                                        class="nav-link text-dark"
                                     >Hello @ViewContext.HttpContext.Items["FirstName"]</a>
                                 </li>
