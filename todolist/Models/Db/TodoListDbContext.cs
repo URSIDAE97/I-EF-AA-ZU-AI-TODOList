@@ -17,6 +17,6 @@ namespace todolist.Models.Db
         public DbSet<Role> Roles { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<TodoList> TodoLists { get; set; }
-        public DbSet<Task> Tasks { get; set; }
+        public DbSet<TodoTask> Tasks { get; set; }
     }
 }
